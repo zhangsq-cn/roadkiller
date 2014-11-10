@@ -1,6 +1,4 @@
 var RoadLayer = cc.Layer.extend({
-    road00 : null,
-    road01 : null,
     roads : [],
     roadHeight : 0,
     roadIdx : 0,
@@ -9,52 +7,58 @@ var RoadLayer = cc.Layer.extend({
 
         this.createRoads();
 
-
-
-        //cc.log(this.road00.getPositionY());
-
-        //this.scheduleUpdate();
+        //this.start();
     },
     createRoads : function () {
-        this.createRoad(0);
-        this.createRoad(1);
+        var i = 0;
+        while (this.createRoad(i++)) {}
     },
 
     createRoad : function (idx) {
-        var road = new cc.TMXTiledMap(res.road_tmx);
+        var road = new cc.Sprite(res.PlayBG_png),
+            bounds,
+            height,
+            size = cc.winSize;
+
         if (idx === 0) {
-            cc.log(road.getBoundingBox());
-            //this.roadHeight = road.getContentSize().height;
-            this.roadHeight = road.getBoundingBox().height;
+            bounds = road.getBoundingBox();
+            this.roadHeight = bounds.height;
         }
-        //road.setPositionY(idx * this.roadHeight);
-        cc.log(idx * this.roadHeight);
+        height = this.roadHeight;
+
         road.attr({
-            y : idx * (this.roadHeight) + 10
+            x : 0,
+            y : idx * height,
+            anchorX : 0,
+            anchorY : 0
         });
         this.roads.push(road);
         this.addChild(road);
+        return road.y < size.height;
     },
 
     updateRoads : function () {
-        var y;
         this.roads.forEach(function (road, idx) {
-            y = road.getPositionY() - 5;
-            if (y <= -this.roadHeight) {
-                y = this.roadHeight;
-            }
-            road.setPositionY(y);
-            y = road.y - 4;
-            if (y <= -this.roadHeight) {
-                y = this.roadHeight;//cc.winSize.height;//
-            }
             road.attr({
-                y : y
+                y : road.y -= 30
             });
+            if (road.y <= -this.roadHeight) {
+                road.attr({
+                    y : (this.roads.length - 1) * this.roadHeight
+                });
+            }
         }.bind(this));
     },
 
     update : function () {
         this.updateRoads();
+    },
+
+    start : function () {
+        this.scheduleUpdate();
+    },
+
+    stop : function () {
+        this.unscheduleUpdate();
     }
 });
