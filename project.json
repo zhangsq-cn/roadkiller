@@ -15,6 +15,7 @@
         "src/PlayScene.js",
         "src/RoadLayer.js",
         "src/CarLayer.js",
-        "src/ControlLayer.js"
+        "src/ControlLayer.js",
+        "src/StartLayer.js"
     ]
 }
